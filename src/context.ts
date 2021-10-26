@@ -1,4 +1,4 @@
-import { StringOptional } from "./utility";
+import { StringOptional, LineRange } from "./utility";
 
 const tabSize = 2;
 
@@ -18,8 +18,32 @@ function indentMax(a: string, b: string) {
   return a.length > b.length ? a : b;
 }
 
+export class Document {
+  constructor(private _lines: readonly string[]) {}
+
+  get lines() { return this._lines; }
+
+  get lineCount() { return this._lines.length; }
+
+  slice(start: number, end: number): Context {
+    return new Context(this, start, end);
+  }
+}
+
 export class Context {
-  constructor(private lines: readonly string[], private start: number, private end: number) {}
+  constructor(private _document: Document, private start: number, private end: number) {}
+
+  private get lines() {
+    return this._document.lines;
+  }
+
+  get document() {
+    return this._document;
+  }
+
+  get range(): LineRange {
+    return [this.start, this.end];
+  }
 
   get lineCount() {
     return this.end - this.start;

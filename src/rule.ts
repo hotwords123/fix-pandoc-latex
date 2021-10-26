@@ -1,5 +1,6 @@
-import { Context } from "./context";
-import { Criterion, PatternLike } from "./criterion";
+import { Document, Context } from "./context";
+import { Criterion } from "./criterion";
+import { StringOptional, PatternLike } from "./utility";
 
 export abstract class Rule {
   protected criterion = Criterion.AND();
@@ -11,6 +12,11 @@ export abstract class Rule {
 
   after(...args: Parameters<(typeof Criterion)["after"]>): this {
     this.criterion.add(Criterion.after(...args));
+    return this;
+  }
+
+  inside(...args: Parameters<(typeof Criterion)["inside"]>): this {
+    this.criterion.add(Criterion.inside(...args));
     return this;
   }
 
@@ -47,10 +53,11 @@ export class InsertRule extends Rule {
   }
 
   execute(lines: string[]): string[] {
+    const document = new Document(lines);
     const results = [];
 
     for (let lineNo = 0; lineNo <= lines.length; ++lineNo) {
-      const context = new Context(lines, lineNo, lineNo);
+      const context = document.slice(lineNo, lineNo);
 
       if (this.criterion.matches(context)) {
         const indent = context.getIndent();
@@ -64,7 +71,7 @@ export class InsertRule extends Rule {
   }
 }
 
-type ReplaceValueLike = string | ((line: string) => string | null);
+type ReplaceValueLike = StringOptional | ((line: string, context: Context) => StringOptional);
 
 export class ReplaceRule extends Rule {
   private toReplace: ReplaceValueLike = '';
@@ -80,13 +87,14 @@ export class ReplaceRule extends Rule {
   }
 
   execute(lines: string[]): string[] {
+    const document = new Document(lines);
     const results = [];
 
     for (let lineNo = 0; lineNo < lines.length; ++lineNo) {
-      const context = new Context(lines, lineNo, lineNo + 1);
+      const context = document.slice(lineNo, lineNo + 1);
 
       if (this.criterion.matches(context)) {
-        const replaced = typeof this.toReplace === 'function' ? this.toReplace(lines[lineNo]) : this.toReplace;
+        const replaced = typeof this.toReplace === 'function' ? this.toReplace(context.self()!, context) : this.toReplace;
         if (replaced !== null) {
           const indent = context.getIndent();
           results.push(indent + replaced);

@@ -6,11 +6,14 @@ import os = require("os");
 import Reviser from "./reviser";
 import { Rule } from "./rule";
 import { Criterion } from "./criterion";
+import { FixFigureRule } from "./fix-figure";
+import { Document } from "./context";
+import { splitLines } from "./utility";
 
 const srcFile = pathlib.resolve(process.argv[2] || './homework.tex');
 
 const content = fs.readFileSync(srcFile, 'utf-8');
-const lines = content.split(/\r?\n/);
+const lines = splitLines(content);
 
 const reviser = new Reviser();
 
@@ -45,6 +48,17 @@ reviser.addRules([
   Rule.replace("\\newcommand{\\i}{{\\rm i}}")
       .with("\\renewcommand{\\i}{{\\rm i}}"),
 
+  // fix blank lines inside equations
+  Rule.replace("")
+      .with(null)
+      .either(
+        Criterion.inside("\\begin{aligned}", "\\end{aligned}"),
+        Criterion.inside(line => !!line && line.startsWith("\\begin{array}"), "\\end{array}")
+      ),
+
+  // fix figures
+  FixFigureRule.fromPath(pathlib.join(pathlib.dirname(srcFile), 'figure.tex')),
+
   // fix `aligned` and `array` not working outside math mode
   Rule.replace("\\begin{aligned}").with("\\begin{align*}"),
   Rule.replace("\\end{aligned}").with("\\end{align*}"),
@@ -69,7 +83,9 @@ reviser.addRules([
       .either(
         Criterion.after("\\end{longtable}"),
         Criterion.before("\\begin{align*}"),
-        Criterion.before(line => !!line && line.startsWith("\\["))
+        Criterion.after("\\end{align*}"),
+        Criterion.before(line => !!line && line.startsWith("\\[")),
+        Criterion.after(line => !!line && line.endsWith("\\]")),
       ),
 ]);
 
