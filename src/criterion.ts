@@ -32,7 +32,7 @@ export abstract class Criterion {
     return new CompoundCriterion(CompoundType.OR, criteria);
   }
 
-  static not(criterion: Criterion) {
+  static NOT(criterion: Criterion) {
     return new NotCriterion(criterion);
   }
 }
