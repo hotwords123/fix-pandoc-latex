@@ -53,7 +53,11 @@ reviser.addRules([
       .with(null)
       .either(
         Criterion.inside("\\begin{aligned}", "\\end{aligned}"),
-        Criterion.inside(line => !!line && line.startsWith("\\begin{array}"), "\\end{array}")
+        Criterion.inside(line => !!line && line.startsWith("\\begin{array}"), "\\end{array}"),
+        Criterion.inside(
+          line => !!line && line.startsWith("\\["),
+          line => !!line && line.endsWith("\\]")
+        )
       ),
 
   // fix figures
@@ -83,7 +87,10 @@ reviser.addRules([
       .either(
         Criterion.after("\\end{longtable}"),
         Criterion.before("\\begin{align*}"),
-        Criterion.after("\\end{align*}"),
+        Criterion.AND([
+          Criterion.after("\\end{align*}"),
+          Criterion.NOT(Criterion.before(line => !!line && line.startsWith("\\hypertarget")))
+        ]),
         Criterion.before(line => !!line && line.startsWith("\\[")),
         Criterion.after(line => !!line && line.endsWith("\\]")),
       ),
