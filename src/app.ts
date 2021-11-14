@@ -24,22 +24,30 @@ reviser.addRules([
 
   // adjust page margin
   Rule.insert([
-      "% adjust page margin",
-      "\\usepackage{geometry}",
-      "\\geometry{a4paper,scale=0.9}",
-      "",
-    ]).before("\\date{}"),
+    "% adjust page margin",
+    "\\usepackage{geometry}",
+    "\\geometry{a4paper,scale=0.9}",
+    "",
+  ]).before("\\date{}"),
+
+  // append pdf if exists
+  Rule.insert([
+    "\\usepackage{pdfpages}"
+  ]).before("\\begin{document}"),
+  Rule.insert([
+    "\\IfFileExists{./append.pdf}{\\includepdf{./append.pdf}}{}"
+  ]).before("\\end{document}"),
 
   // add polyfills
   Rule.insert([
-      "",
-      "% polyfill",
-      "\\newcommand{\\N}{\\mathbb N}",
-      "\\newcommand{\\Z}{\\mathbb Z}",
-      "\\newcommand{\\Q}{\\mathbb Q}",
-      "\\newcommand{\\R}{\\mathbb R}",
-//    "\\newcommand{\\lt}{<}",
-//    "\\newcommand{\\gt}{>}",
+    "",
+    "% polyfill",
+    "\\newcommand{\\N}{\\mathbb N}",
+    "\\newcommand{\\Z}{\\mathbb Z}",
+    "\\newcommand{\\Q}{\\mathbb Q}",
+    "\\newcommand{\\R}{\\mathbb R}",
+//  "\\newcommand{\\lt}{<}",
+//  "\\newcommand{\\gt}{>}",
     ]).after("\\date{}"),
 
   // fix \d and \i already defined
