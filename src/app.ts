@@ -72,8 +72,8 @@ reviser.addRules([
   FixFigureRule.fromPath(pathlib.join(pathlib.dirname(srcFile), 'figure.tex')),
 
   // fix `aligned` and `array` not working outside math mode
-  Rule.replace("\\begin{aligned}").with("\\begin{align*}"),
-  Rule.replace("\\end{aligned}").with("\\end{align*}"),
+  Rule.replace("\\begin{aligned}").with("\\[\\begin{aligned}"),
+  Rule.replace("\\end{aligned}").with("\\end{aligned}\\]"),
   Rule.insert("\\[")
       .before(line => !!line && line.startsWith("\\begin{array}"))
       .after(line => !line),
@@ -93,14 +93,14 @@ reviser.addRules([
   Rule.replace("")
       .with("%")
       .either(
-        Criterion.after("\\end{longtable}"),
-        Criterion.before("\\begin{align*}"),
+        Criterion.before(line => !!line && line.startsWith("\\[")),
         Criterion.AND([
-          Criterion.after("\\end{align*}"),
+          Criterion.OR([
+            Criterion.after("\\end{longtable}"),
+            Criterion.after(line => !!line && line.endsWith("\\]")),
+          ]),
           Criterion.NOT(Criterion.before(line => !!line && line.startsWith("\\hypertarget")))
         ]),
-        Criterion.before(line => !!line && line.startsWith("\\[")),
-        Criterion.after(line => !!line && line.endsWith("\\]")),
       ),
 ]);
 
