@@ -46,6 +46,7 @@ reviser.addRules([
     "\\newcommand{\\Z}{\\mathbb Z}",
     "\\newcommand{\\Q}{\\mathbb Q}",
     "\\newcommand{\\R}{\\mathbb R}",
+    "\\newcommand{\\C}{\\mathbb C}",
 //  "\\newcommand{\\lt}{<}",
 //  "\\newcommand{\\gt}{>}",
     ]).after("\\date{}"),
