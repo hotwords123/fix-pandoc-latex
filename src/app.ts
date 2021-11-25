@@ -49,6 +49,7 @@ reviser.addRules([
     "\\newcommand{\\C}{\\mathbb C}",
 //  "\\newcommand{\\lt}{<}",
 //  "\\newcommand{\\gt}{>}",
+    "\\newcommand{\\abs}[1]{\\left|#1\\right|}",
     ]).after("\\date{}"),
 
   // fix \d and \i already defined
