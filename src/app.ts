@@ -29,6 +29,10 @@ reviser.addRules([
     "\\usepackage{geometry}",
     "\\geometry{a4paper,scale=0.9}",
     "",
+    "\\usepackage{fancyhdr}",
+    "\\pagestyle{fancy}",
+    "\\usepackage{lastpage}",
+    "\\fancyfoot[C]{\\thepage{} / \\pageref{LastPage}}"
   ]).before("\\date{}"),
 
   // append pdf if exists
