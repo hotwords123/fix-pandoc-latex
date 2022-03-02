@@ -7,7 +7,7 @@ function indentOf(line: string) {
 }
 
 function removeIndent(line: string) {
-  return line.trimLeft();
+  return line.trimStart();
 }
 
 function indentMin(a: string, b: string) {
