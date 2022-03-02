@@ -22,14 +22,18 @@ export class CustomTemplateRule extends ReplaceRule {
 
   static fromDir(dir: string): CustomTemplateRule {
     let templates: CustomTemplate[] = [];
-    for (let file of fs.readdirSync(dir)) {
-      if (file.endsWith(".tex")) {
-        let name = file.slice(0, -4);
-        let path = pathlib.join(dir, file);
-        let lines = splitLines(fs.readFileSync(path, "utf-8"));
-        templates.push({ name, lines });
-        console.log(`found template "${name}"`);
+    try {
+      for (let file of fs.readdirSync(dir)) {
+        if (file.endsWith(".tex")) {
+          let name = file.slice(0, -4);
+          let path = pathlib.join(dir, file);
+          let lines = splitLines(fs.readFileSync(path, "utf-8"));
+          templates.push({ name, lines });
+          console.log(`found custom template "${name}"`);
+        }
       }
+    } catch (err) {
+      console.warn("failed to read custom templates:", err);
     }
     return new CustomTemplateRule(templates);
   }
