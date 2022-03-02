@@ -9,6 +9,7 @@ import { Criterion } from "./criterion";
 import { FixFigureRule } from "./fix-figure";
 import { Document } from "./context";
 import { splitLines } from "./utility";
+import { CustomTemplateRule } from "./custom-template";
 
 const srcFile = pathlib.resolve(process.argv[2] || './homework.tex');
 
@@ -104,6 +105,9 @@ reviser.addRules([
           Criterion.NOT(Criterion.before(line => !!line && line.startsWith("\\hypertarget")))
         ]),
       ),
+
+  // custom templates
+  CustomTemplateRule.fromDir(pathlib.join(__dirname, "..", "templates")),
 ]);
 
 const results = reviser.process(lines);
