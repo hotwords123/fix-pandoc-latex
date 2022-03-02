@@ -32,6 +32,8 @@ reviser.addRules([
     "\\usepackage{fancyhdr}",
     "\\pagestyle{fancy}",
     "\\usepackage{lastpage}",
+    "\\renewcommand{\\headrulewidth}{0pt}",
+    "\\fancyhead{}",
     "\\fancyfoot[C]{\\thepage{} / \\pageref{LastPage}}"
   ]).before("\\date{}"),
 
